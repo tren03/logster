@@ -27,26 +27,28 @@ func EncodeData(logRecieved global.EventLog) {
 	fmt.Println("encoded buf ", Buf)
 
 	global.DATA_SENT += len(Buf.Bytes())
-    
+
 	if Buf.Len() > 200 {
-		// file write
-
-		file, err := os.OpenFile("./logs.txt", os.O_RDWR|os.O_APPEND, 0644)
-        defer file.Close()
-		if err != nil {
-			log.Println("error opening file", err)
-		}
-		decodedData := DecodeData()
-        time.Sleep(1 * time.Second)
-		_, err = file.Write(append([]byte(decodedData),'\n'))
-		if err != nil {
-			log.Println("error writing to file", err)
-		}
-		Buf.Reset()
-		enc = gob.NewEncoder(&Buf)
-
+        // file write
+        UploadData()
 	}
 
+}
+
+func UploadData() {
+	file, err := os.OpenFile("./logs.txt", os.O_RDWR|os.O_APPEND, 0644)
+	defer file.Close()
+	if err != nil {
+		log.Println("error opening file", err)
+	}
+	decodedData := DecodeData()
+	time.Sleep(3 * time.Second)
+	_, err = file.Write([]byte(decodedData))
+	if err != nil {
+		log.Println("error writing to file", err)
+	}
+	Buf.Reset()
+	enc = gob.NewEncoder(&Buf)
 }
 
 // Decodes bytes from the buffer
@@ -71,7 +73,7 @@ func DecodeData() string {
 			log.Println("issue in doing json", err)
 		}
 
-		logArray = logArray + string(temp_json)
+		logArray = logArray + string(temp_json) + "\n"
 
 	}
 

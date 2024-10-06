@@ -7,8 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/tren03/logster/global"
+	"github.com/tren03/logster/buffer"
 	"github.com/tren03/logster/handlers"
 )
 
@@ -117,8 +116,26 @@ import (
 //	}
 //
 //	defer file.Close()
-func main() {
+func cleanup(){
+    if len(buffer.Buf.Bytes())!= 0{
+        buffer.UploadData()
+    }
+    log.Println("uploaded all data :)")
 
+}
+func main() {
+   	sigChannel := make(chan os.Signal, 1)
+	signal.Notify(sigChannel, syscall.SIGINT, syscall.SIGTERM)
+
+	// Start a goroutine to handle cleanup when an OS signal is received
+	go func() {
+		sig := <-sigChannel
+		fmt.Println("Received signal:", sig)
+		cleanup()  // Call cleanup on termination
+		os.Exit(0) // Exit the program after cleanup
+	}()
+
+    defer cleanup()
 	fmt.Println("server started at port 8080")
 	http.HandleFunc("POST /log", handlers.HandleLog)
     http.HandleFunc("/", handlers.HandleRoot)
