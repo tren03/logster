@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
+	"github.com/tren03/logster/global"
 	"github.com/tren03/logster/handlers"
 )
 
@@ -68,8 +72,6 @@ import (
 //
 //	defer file.Close()
 
-
-
 // CREATES A STREAM OF DATA AND WRITES IT TO A FILE WITH SIMULATED DELAY
 //func genNos(stream chan<- []byte, count int) {
 //	for i := 1; i <= count; i++ {
@@ -116,6 +118,7 @@ import (
 //
 //	defer file.Close()
 func main() {
+
 	fmt.Println("server started at port 8080")
 	http.HandleFunc("POST /log", handlers.HandleLog)
     http.HandleFunc("/", handlers.HandleRoot)

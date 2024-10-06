@@ -31,9 +31,8 @@ func HandleLog(w http.ResponseWriter, r *http.Request) {
 
 	eventLog := global.EventLog{UnixTimeStamp: t, EventName: event}
 	fmt.Println(eventLog)
-    fmt.Println("buffer size in bytes ",len(buffer.Buf.Bytes()))
     buffer.EncodeData(eventLog)
-
+    fmt.Println("buffer size in bytes ",len(buffer.Buf.Bytes()))
 }
 
 
