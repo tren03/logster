@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/tren03/logster/azureblob"
 	"github.com/tren03/logster/buffer"
 	"github.com/tren03/logster/handlers"
 )
@@ -72,59 +74,66 @@ import (
 //	defer file.Close()
 
 // CREATES A STREAM OF DATA AND WRITES IT TO A FILE WITH SIMULATED DELAY
-//func genNos(stream chan<- []byte, count int) {
-//	for i := 1; i <= count; i++ {
-//        strNum := strconv.Itoa(i)
-//		stream <- []byte(strNum)
-//	}
 //
-//	close(stream)
+//	func genNos(stream chan<- []byte, count int) {
+//		for i := 1; i <= count; i++ {
+//	       strNum := strconv.Itoa(i)
+//			stream <- []byte(strNum)
+//		}
 //
-//}
-//	file, err := os.OpenFile("./logs.txt", os.O_RDWR|os.O_APPEND, 0644)
-//	if err != nil {
-//		log.Println("error opening the file")
-//	}
+//		close(stream)
 //
-//	stream := make(chan []byte)
-//	go genNos(stream, 1000)
+// }
 //
-//	b := make([]byte,0,100)
+//		file, err := os.OpenFile("./logs.txt", os.O_RDWR|os.O_APPEND, 0644)
+//		if err != nil {
+//			log.Println("error opening the file")
+//		}
 //
-//	for num := range stream {
-//		if len(b) == 100 {
-//			// write to file with 1 second
+//		stream := make(chan []byte)
+//		go genNos(stream, 1000)
+//
+//		b := make([]byte,0,100)
+//
+//		for num := range stream {
+//			if len(b) == 100 {
+//				// write to file with 1 second
+//				time.Sleep(1 * time.Second)
+//				_, err = file.Write(append(b,'\n'))
+//				if err != nil {
+//					log.Println("some error in write", err)
+//				}
+//	           b = b[:0]
+//			} else {
+//				b = append(b,num...)
+//			}
+//
+//	       fmt.Println("finished one iteration")
+//		}
+//
+//		if len(b) != 0 {
 //			time.Sleep(1 * time.Second)
-//			_, err = file.Write(append(b,'\n'))
+//			_, err = file.Write(b)
 //			if err != nil {
 //				log.Println("some error in write", err)
 //			}
-//            b = b[:0]
-//		} else {
-//			b = append(b,num...)
 //		}
 //
-//        fmt.Println("finished one iteration")
-//	}
-//
-//	if len(b) != 0 {
-//		time.Sleep(1 * time.Second)
-//		_, err = file.Write(b)
-//		if err != nil {
-//			log.Println("some error in write", err)
-//		}
-//	}
-//
-//	defer file.Close()
-func cleanup(){
-    if len(buffer.Buf.Bytes())!= 0{
-        buffer.UploadData()
-    }
-    log.Println("uploaded all data :)")
+//		defer file.Close()
+func cleanup() {
+    fmt.Println("all done :)")
+    buffer.CloseChan()
+
+	//	ROOT_URL := fmt.Sprintf("http://localhost:8080/")
+	//	fmt.Println("hitting root for verification of req")
+	//	_, err := http.Get(ROOT_URL)
+	//	if err != nil {
+	//		fmt.Println("err sending get", err)
+	//	}
 
 }
 func main() {
-   	sigChannel := make(chan os.Signal, 1)
+	sigChannel := make(chan os.Signal, 1)
 	signal.Notify(sigChannel, syscall.SIGINT, syscall.SIGTERM)
 
 	// Start a goroutine to handle cleanup when an OS signal is received
@@ -135,17 +144,13 @@ func main() {
 		os.Exit(0) // Exit the program after cleanup
 	}()
 
-    defer cleanup()
+	defer cleanup()
 	fmt.Println("server started at port 8080")
+	fmt.Println("creating container")
+	azureblob.CreateContainer()
 	http.HandleFunc("POST /log", handlers.HandleLog)
-    http.HandleFunc("/", handlers.HandleRoot)
-	log.Println("testing buffer")
-
-//	file, err := os.OpenFile("./logs.txt", os.O_RDWR|os.O_APPEND, 0644)
-//	if err != nil {
-//		log.Println("error opening the file")
-//	}
-//	defer file.Close()
-
+//	http.HandleFunc("/up", handlers.HandleUpload)
+	http.HandleFunc("/", handlers.HandleRoot)
+    buffer.StartSender()
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

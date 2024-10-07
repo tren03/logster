@@ -1,0 +1,13 @@
+run the docker container first
+sudo docker run -rm -p 10000:10000 -name az_container mcr.microsoft.com/azure-storage/azurite azurite-blob --blobHost 0.0.0.0
+
+run the go program and wait for it to connect to the docker blob storage(should take about 1-2 seconds)
+go build && ./logster
+
+run this for benchmarking the webapp - This by default sends 1 lakh req in 5 seconds approx
+for a successful run, we should see total blob size in the storage as 5900000
+ab -p data.json -T 'application/json' -c 500 -n 100000 http://localhost:8080/log
+
+to get the total blob storage after all upload, run this 
+curl localhost:8080
+

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/tren03/logster/azureblob"
 	"github.com/tren03/logster/buffer"
 	"github.com/tren03/logster/global"
 )
@@ -31,14 +32,18 @@ func HandleLog(w http.ResponseWriter, r *http.Request) {
 
 	eventLog := global.EventLog{UnixTimeStamp: t, EventName: event}
 	fmt.Println(eventLog)
-    buffer.EncodeData(eventLog)
-    fmt.Println("buffer size in bytes ",len(buffer.Buf.Bytes()))
+   // buffer.EncodeBigData(eventLog)
+    fmt.Println("sending data to buffer")
+    buffer.PutData(eventLog)
 }
 
 
 func HandleRoot(w http.ResponseWriter, r *http.Request) {
-    buffer.DecodeData()
-}
+    azureblob.GetBlobInfo()
+} 
 
+func HandleUpload(w http.ResponseWriter, r *http.Request) {
+    //buffer.UploadCleanup()
+} 
 
 
