@@ -19,8 +19,9 @@ func Test25(t *testing.T) {
 		log_json, err := json.Marshal(log)
 		if err != nil {
 			t.Fail()
-			fmt.Println("err conv to json", log_json)
+			fmt.Println("err conv to json", err)
 		}
+        fmt.Println("this is data json sent : ",log_json)
 		temp_buf := bytes.NewReader(log_json)
 		_, err = http.Post(URL, "application/json", temp_buf)
 		if err != nil {

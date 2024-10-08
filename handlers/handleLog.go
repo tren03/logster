@@ -30,8 +30,7 @@ func HandleLog(w http.ResponseWriter, r *http.Request) {
 		log.Println("error in unmarshalling the json request")
 	}
 
-	eventLog := global.EventLog{UnixTimeStamp: t, EventName: event}
-	fmt.Println(eventLog)
+	eventLog := global.EventLog{UnixTimeStamp: t, Data: event}
    // buffer.EncodeBigData(eventLog)
     fmt.Println("sending data to buffer")
     buffer.PutData(eventLog)
