@@ -11,3 +11,21 @@ ab -p data.json -T 'application/json' -c 500 -n 100000 http://localhost:8080/log
 to get the total blob storage after all upload, run this 
 curl localhost:8080
 
+
+
+
+NOW THAT WE HAVE MADE COMPOSE 
+RUN 
+
+sudo docker compose-up    : builds and runs the whole app
+
+
+ab -p data.json -T 'application/json' -c 500 -n 100000 http://localhost:8080/log    :open another terminal in root of this proj and run this
+
+each req when put into the blob is 58 Bytes
+
+
+after the server processes everything, then run
+curl localhost:8080     -> gets the total size of the blobs stored
+
+

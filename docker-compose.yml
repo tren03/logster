@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite
+    ports:
+      - "10000:10000"  # Exposing Azurite's blob storage port
+    command: "azurite-blob --blobHost 0.0.0.0"  # Ensure it listens on all interfaces
+    networks:
+      - logster-network  # Add the container to the shared network
+
+  logster:
+    build: . # Assuming your Go app's Dockerfile is in the "logster" folder
+    container_name: logster
+    depends_on:
+      - azurite  # Make sure Azurite starts first
+    ports:
+      - "8080:8080"  # Exposing your Go app on port 8080
+    networks:
+      - logster-network  # Add the container to the shared network
+    environment:
+      # Specify the connection string or URL to the Azurite blob storage
+      AZURE_BLOB_ENDPOINT: http://azurite:10000  # Access the Azurite blob using the service name
+      
+networks:
+  logster-network:
+    driver: bridge  # Create a Docker network for the two services to communicate
+
