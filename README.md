@@ -16,6 +16,8 @@ We verify this by sending a get request to the webserver after the upload, which
 ### Handling 100,000 requests (approx - 12,628.41 requests per second)
 https://github.com/user-attachments/assets/e124cc5e-dd35-41c2-b40a-ab1f41ffc0d5
 
+the log "size of one entry" indicates that the consumer process is running and preparing the data to upload
+
 1 request = 59 Bytes
 100000 request = 5900000 Bytes
 
