@@ -18,7 +18,7 @@ https://github.com/user-attachments/assets/e124cc5e-dd35-41c2-b40a-ab1f41ffc0d5
 
 the log "size of one entry" indicates that the consumer process is running and preparing the data to upload
 
-1 request = 59 Bytes
+1 request = 59 Bytes, Therefore -> 
 100000 request = 5900000 Bytes
 
 ## High Level Design
