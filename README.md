@@ -6,15 +6,18 @@ A toy project done to explore concurrency in go by simulating heavy load on a we
 ## Details
 The test I ran hit the webserver with 100,000 requests in 7.919 seconds, approx - 12,628.41 requests per second. 
 The server was able to handle the load and succesfully upload all data into the blob storage.
-We verify this by sending a get request to the webserver after the upload, which logs the size of all blobs and returns total size of all blobs in the container ( each json obj when uploaded is 59 bytes, and when we check the total size, its 5900000 bytes -> this means all 100000 requests were processed wihtout any loss in data
+We verify this by sending a get request to the webserver after the upload, which logs the size of all blobs and returns total size of all blobs in the container ( each json obj when uploaded is 59 bytes, and when we check the total size, its 5900000 bytes -> this means all 100000 requests were processed without any loss in data)
 
 ## Demo
 ### Size of a single request
 
 ![Logsize-comment](https://github.com/user-attachments/assets/15c02901-e0de-4b86-8931-38f2c81e247c)
 
-### Handling 100,000 requests (approx - 12,628.41 requests per second)
-https://github.com/user-attachments/assets/e124cc5e-dd35-41c2-b40a-ab1f41ffc0d5
+### Handling 100,000 requests (approx - 12,628.41 requests per secon
+
+https://github.com/user-attachments/assets/f4a89eda-c0d2-475f-a8bd-51e8846e8d63
+
+
 
 the log "size of one entry" indicates that the consumer process is running and preparing the data to upload
 
@@ -38,8 +41,10 @@ Both services are connected via a custom bridge network (logster-network), which
 
 ![high_level](https://github.com/user-attachments/assets/1b6de655-5f27-4264-99ab-845e09dfe1d9)
 
+
 ## Low Level Design
-![low_level](https://github.com/user-attachments/assets/30076bff-1d3f-430b-8b10-d8acc2904594)
+
+![low_level_updated](https://github.com/user-attachments/assets/eb184b88-de65-4905-8ddd-9a30483248cb)
 
 ## Usage
 
