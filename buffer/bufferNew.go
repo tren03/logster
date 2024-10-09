@@ -26,14 +26,15 @@ func PutData(logRecieved global.EventLog) {
 }
 
 // upload to db
-func SendData() {
+// the i refers to the id of the consumer
+func SendData(index int) {
 	for {
 		var final_string string
 		for i := 0; i < 177725; i++ { // Process a batch
 			select {
 			case str := <-B:
 				final_string += str + "\n"
-				log.Println("size of one entry,", len(final_string))
+				log.Printf("CONSUMER %d connsuming from buffer channel, current length of data ready to upload %d",index, len(final_string))
 			default:
 				// If no data is immediately available, break out
 				break
@@ -46,8 +47,8 @@ func SendData() {
 }
 
 // spins up go routing to recieve data from the channel which i call in main
-func StartSender() {
-	go SendData()
+func StartSender(i int) {
+	go SendData(i)
 }
 
 func CloseChan() {
