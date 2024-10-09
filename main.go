@@ -121,8 +121,8 @@ import (
 //
 //		defer file.Close()
 func cleanup() {
-    fmt.Println("all done :)")
-    buffer.CloseChan()
+	fmt.Println("all done :)")
+	buffer.CloseChan()
 
 	//	ROOT_URL := fmt.Sprintf("http://localhost:8080/")
 	//	fmt.Println("hitting root for verification of req")
@@ -149,8 +149,14 @@ func main() {
 	fmt.Println("creating container")
 	azureblob.CreateContainer()
 	http.HandleFunc("POST /log", handlers.HandleLog)
-//	http.HandleFunc("/up", handlers.HandleUpload)
+	//	http.HandleFunc("/up", handlers.HandleUpload)
 	http.HandleFunc("/", handlers.HandleRoot)
-    buffer.StartSender()
+
+	// starting 5 go routines to simulataneously run consume and upload data
+    // lost some data when i had 10 go routines
+	for i := 0; i < 8; i++ {
+		buffer.StartSender(i)
+	}
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

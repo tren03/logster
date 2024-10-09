@@ -2,40 +2,49 @@ package buffer
 
 import (
 	"fmt"
-	"sync"
 	"testing"
 	"time"
 )
 
-var buf = make(chan int,10)
+var buf = make(chan int, 5)
 
 func TestHello(t *testing.T) {
-    var wg sync.WaitGroup
-    wg.Add(2)
 
-	fmt.Println("hello testing go routines and channels")
-
+	// need a chan that has data and 3 consumers eat from that
+	// spawning the 3 consumers
 	go func() {
-        defer wg.Done()
-		for i := 1; i <=5; i++ {
-			buf <- i
-			fmt.Println("sent ", i)
+		for {
+			for num := range buf {
+				time.Sleep(1 * time.Second)
+				fmt.Println("consuming from consumer 1 : ", num)
+			}
 		}
-        close(buf)
-        
 	}()
 
 	go func() {
-        time.Sleep(2 *time.Second)
-        defer wg.Done()
-		fmt.Println("consuming the data")
-        for data := range buf{
-        time.Sleep(2 *time.Second)
-		fmt.Println("data recieved",data)
-        }
+		for {
+			for num := range buf {
+				time.Sleep(1 * time.Second)
+				fmt.Println("consuming from consumer 2 : ", num)
+			}
+
+		}
+	}()
+	go func() {
+		for {
+			for num := range buf {
+				time.Sleep(1 * time.Second)
+				fmt.Println("consuming from consumer 3 : ", num)
+			}
+		}
 	}()
 
+	// producer
 
-    wg.Wait()
+	for i := 1; i <= 10; i++ {
+		buf <- i
+	}
+
+    time.Sleep(10* time.Second)
 
 }
